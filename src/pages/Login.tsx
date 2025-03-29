@@ -25,7 +25,7 @@ function Login() {
   return (
     <div className="min-h-screen bg-gray-100 flex items-center justify-center">
       <div className="max-w-md w-full bg-white rounded-lg shadow-md p-8">
-        <h2 className="text-2xl font-bold text-center mb-6">Login</h2>
+        <h2 className="text-2xl font-bold text-center mb-6">Đăng Nhập</h2>
         <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
           <div>
             <label className="block text-sm font-medium text-gray-700">Email</label>
@@ -45,7 +45,7 @@ function Login() {
             )}
           </div>
           <div>
-            <label className="block text-sm font-medium text-gray-700">Password</label>
+            <label className="block text-sm font-medium text-gray-700">Mật Khẩu</label>
             <input
               type="password"
               {...register('password', { required: 'Password is required' })}
@@ -59,13 +59,13 @@ function Login() {
             type="submit"
             className="w-full bg-indigo-600 text-white py-2 px-4 rounded-md hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2"
           >
-            Login
+            Đăng Nhập
           </button>
         </form>
         <p className="mt-4 text-center text-sm text-gray-600">
-          Don't have an account?{' '}
+          Không có tài khoản?{' '}
           <Link to="/register" className="text-indigo-600 hover:text-indigo-500">
-            Register
+            Đăng Ký
           </Link>
         </p>
       </div>

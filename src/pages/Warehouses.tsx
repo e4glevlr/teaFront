@@ -31,10 +31,8 @@ function Warehouses() {
         <div>
             <div className="sm:flex sm:items-center">
                 <div className="sm:flex-auto">
-                    <h1 className="text-2xl font-semibold text-gray-900">Warehouses</h1>
-                    <p className="mt-2 text-sm text-gray-700">
-                        A list of all warehouses where tea packages are stored
-                    </p>
+                    <h1 className="text-2xl font-semibold text-gray-900">Kho Hàng</h1>
+
                 </div>
             </div>
 
@@ -58,9 +56,9 @@ function Warehouses() {
                             </div>
                             <div className="mt-4">
                                 <div className="flex justify-between text-sm">
-                                    <span className="text-gray-500">Capacity</span>
+                                    <span className="text-gray-500">Sức Chứa</span>
                                     <span className="font-medium text-gray-900">
-                    {warehouse.currentcapacity}/{warehouse.totalcapacity} units
+                    {warehouse.currentcapacity}/{warehouse.totalcapacity}
                   </span>
                                 </div>
                                 <div className="mt-2 w-full bg-gray-200 rounded-full h-2.5">

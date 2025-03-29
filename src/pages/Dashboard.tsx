@@ -16,7 +16,7 @@ function Dashboard() {
 
   return (
     <div>
-      <h1 className="text-2xl font-semibold text-gray-900">Dashboard</h1>
+      <h1 className="text-2xl font-semibold text-gray-900">Tổng Quan</h1>
       
       <div className="mt-6 grid gap-6 sm:grid-cols-2">
         <div className="bg-white overflow-hidden shadow rounded-lg">
@@ -27,7 +27,7 @@ function Dashboard() {
               </div>
               <div className="ml-4">
                 <h3 className="text-lg font-medium text-gray-900">
-                  Total Packages
+                  Tổng Gói Hàng
                 </h3>
                 <p className="text-2xl font-semibold text-indigo-600">
                   {packagesData?.length || 0}
@@ -45,7 +45,7 @@ function Dashboard() {
               </div>
               <div className="ml-4">
                 <h3 className="text-lg font-medium text-gray-900">
-                  Total Warehouses
+                  Số Kho
                 </h3>
                 <p className="text-2xl font-semibold text-indigo-600">
                   {warehousesData?.length || 0}
@@ -58,20 +58,20 @@ function Dashboard() {
 
       <div className="mt-8">
         <h2 className="text-lg font-medium text-gray-900 mb-4">
-          Recent Packages
+          Những Gói Hàng Gần Đây
         </h2>
         <div className="bg-white shadow rounded-lg overflow-hidden">
           <table className="min-w-full divide-y divide-gray-200">
             <thead className="bg-gray-50">
               <tr>
                 <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                  Name
+                  Tên
                 </th>
                 <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                  Quantity
+                  Số Lượng
                 </th>
                 <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                  Created At
+                  Thời Gian Tạo
                 </th>
               </tr>
             </thead>
