@@ -14,7 +14,8 @@ const defaultIcon = new Icon({
 });
 
 function MapPage() {
-    const position = [51.505, -0.09]; // Vị trí mặc định, bạn có thể thay đổi tùy ý
+    const position: [number, number] = [20.980852894919288, 105.78739504232891];
+    const position1: [number, number] = [20.995686156925252, 105.8080708988117];
 
     return (
         <div className="bg-white p-6 rounded-lg shadow-md">
@@ -33,9 +34,15 @@ function MapPage() {
                     />
                     <Marker position={position} icon={defaultIcon}>
                         <Popup>
-                            Vị trí hiện tại. <br /> Bạn có thể tùy chỉnh nội dung này.
+                            Kho 1
                         </Popup>
                     </Marker>
+                    <Marker position={position1} icon={defaultIcon}>
+                        <Popup>
+                            Kho 2
+                        </Popup>
+                    </Marker>
+
                 </MapContainer>
             </div>
         </div>

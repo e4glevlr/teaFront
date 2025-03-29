@@ -42,6 +42,18 @@ function Packages() {
     }
   };
 
+  // Function to determine tea type color
+  const getTeaTypeColor = (teaType: string) => {
+    switch (teaType.toLowerCase()) {
+      case "che thai":
+        return 'bg-blue-100 text-blue-800'; // Blue for Che Thai
+      case "che trung quoc":
+        return 'bg-yellow-100 text-yellow-800'; // Yellow for Che Trung Quoc
+      default:
+        return 'bg-green-100 text-green-800'; // Green for other types
+    }
+  };
+
   // Function to get Vietnamese translation of status
   const getStatusTranslation = (status: string) => {
     switch (status) {
@@ -136,8 +148,12 @@ function Packages() {
                         <td className="whitespace-nowrap py-4 pl-4 pr-3 text-sm font-medium text-gray-900">
                           {pkg.fullname}
                         </td>
-                        <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-500">
-                          {pkg.typeteaname}
+                        <td className="whitespace-nowrap px-3 py-4 text-sm">
+                          <span
+                              className={`inline-flex rounded-full px-2 py-1 text-xs font-semibold ${getTeaTypeColor(pkg.typeteaname)}`}
+                          >
+                            {pkg.typeteaname}
+                          </span>
                         </td>
                         <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-500">
                           {pkg.capacity} {pkg.unit}
@@ -150,7 +166,7 @@ function Packages() {
                             className={`inline-flex rounded-full px-2 py-1 text-xs font-semibold ${getStatusColor(pkg.status)}`}
                             title={getStatusTranslation(pkg.status)}
                         >
-                          {pkg.status}
+                          {getStatusTranslation(pkg.status)}
                         </span>
                         </td>
                         <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-500">

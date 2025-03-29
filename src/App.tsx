@@ -7,54 +7,56 @@ import Register from './pages/Register';
 import Dashboard from './pages/Dashboard';
 import Packages from './pages/Packages';
 import Warehouses from './pages/Warehouses';
-import GenerateQRCode from './pages/GenerateQRCode'; // Import the new QR code component
+import GenerateQRCode from './pages/GenerateQRCode';
+import MapPage from './pages/MapPage'; // Import component Bản Đồ mới
 import { useAuthStore } from './store/authStore';
 
 // Create a new query client with default options
 const queryClient = new QueryClient({
-  defaultOptions: {
-    queries: {
-      retry: 1,
-      refetchOnWindowFocus: false,
+    defaultOptions: {
+        queries: {
+            retry: 1,
+            refetchOnWindowFocus: false,
+        },
     },
-  },
 });
 
 function PrivateRoute({ children }: { children: React.ReactNode }) {
-  const token = useAuthStore((state) => state.token);
-  return token ? <>{children}</> : <Navigate to="/login" />;
+    const token = useAuthStore((state) => state.token);
+    return token ? <>{children}</> : <Navigate to="/login" />;
 }
 
 function App() {
-  return (
-      <QueryClientProvider client={queryClient}>
-        <BrowserRouter>
-          <Routes>
-            {/* Public routes */}
-            <Route path="/login" element={<Login />} />
-            <Route path="/register" element={<Register />} />
+    return (
+        <QueryClientProvider client={queryClient}>
+            <BrowserRouter>
+                <Routes>
+                    {/* Public routes */}
+                    <Route path="/login" element={<Login />} />
+                    <Route path="/register" element={<Register />} />
 
-            {/* Protected routes within Layout */}
-            <Route
-                path="/"
-                element={
-                  <PrivateRoute>
-                    <Layout />
-                  </PrivateRoute>
-                }
-            >
-              <Route index element={<Dashboard />} />
-              <Route path="packages" element={<Packages />} />
-              <Route path="warehouses" element={<Warehouses />} />
-              <Route path="generate-qrcode" element={<GenerateQRCode />} /> {/* New QR code route */}
+                    {/* Protected routes within Layout */}
+                    <Route
+                        path="/"
+                        element={
+                            <PrivateRoute>
+                                <Layout />
+                            </PrivateRoute>
+                        }
+                    >
+                        <Route index element={<Dashboard />} />
+                        <Route path="packages" element={<Packages />} />
+                        <Route path="warehouses" element={<Warehouses />} />
+                        <Route path="generate-qrcode" element={<GenerateQRCode />} />
+                        <Route path="map" element={<MapPage />} /> {/* Thêm route mới cho trang Bản Đồ */}
 
-              {/* Redirect any unmatched routes to dashboard */}
-              <Route path="*" element={<Navigate to="/" replace />} />
-            </Route>
-          </Routes>
-        </BrowserRouter>
-      </QueryClientProvider>
-  );
+                        {/* Redirect any unmatched routes to dashboard */}
+                        <Route path="*" element={<Navigate to="/" replace />} />
+                    </Route>
+                </Routes>
+            </BrowserRouter>
+        </QueryClientProvider>
+    );
 }
 
 export default App;
