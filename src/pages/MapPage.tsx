@@ -3,15 +3,14 @@ import { MapContainer, TileLayer, Marker, Popup } from 'react-leaflet';
 import 'leaflet/dist/leaflet.css';
 import { Icon } from 'leaflet';
 import { useQuery } from '@tanstack/react-query';
-import { MapPin } from 'lucide-react';
+import { MapPin, Activity } from 'lucide-react';
 import { warehouses } from '../lib/api';
-import markerIcon from 'leaflet/dist/images/marker-icon.png';
-import markerShadow from 'leaflet/dist/images/marker-shadow.png';
+import { useNavigate } from 'react-router-dom';
 
-// Fix cho marker icon trong React Leaflet
-const defaultIcon = new Icon({
-    iconUrl: markerIcon,
-    shadowUrl: markerShadow,
+// Tạo icon tùy chỉnh cho trạng thái
+const activeIcon = new Icon({
+    iconUrl: 'https://raw.githubusercontent.com/pointhi/leaflet-color-markers/master/img/marker-icon-2x-green.png',
+    shadowUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/0.7.7/images/marker-shadow.png',
     iconSize: [25, 41],
     iconAnchor: [12, 41]
 });
@@ -27,27 +26,57 @@ interface Warehouse {
     totalcapacity: number;
 }
 
+// Định nghĩa kiểu dữ liệu cho điểm cân
+interface WeighingStation {
+    id: number;
+    name: string;
+    status: 'On' | 'Off';
+    managementUnit: string;
+    lat: number;
+    lon: number;
+    warehouseId: number;
+}
+
 function MapPage() {
+    const navigate = useNavigate();
+
     // Sử dụng React Query để lấy dữ liệu kho
     const { data: warehousesList, isLoading, error } = useQuery<Warehouse[]>({
         queryKey: ['warehouses'],
         queryFn: warehouses.getAll,
     });
 
-    // Vị trí mặc định (Hà Nội) nếu không có dữ liệu kho
+    // Chuyển đổi dữ liệu kho thành dữ liệu điểm cân
+    const weighingStations: WeighingStation[] = warehousesList?.map(warehouse => ({
+        id: warehouse.warehouseid,
+        name: `Điểm cân ${warehouse.name}`,
+        status: 'On', // Tất cả đều đang hoạt động như yêu cầu
+        managementUnit: 'Hợp tác xã Mỗ Lao',
+        lat: warehouse.lat,
+        lon: warehouse.lon,
+        warehouseId: warehouse.warehouseid
+    })) || [];
+
+    // Vị trí mặc định (Hà Nội) nếu không có dữ liệu
     const defaultPosition: [number, number] = [21.0285, 105.8542];
 
-    // Tính toán vị trí trung tâm dựa trên tất cả các kho
+    // Tính toán vị trí trung tâm dựa trên tất cả các điểm
     const calculateCenter = () => {
-        if (!warehousesList || warehousesList.length === 0) return defaultPosition;
+        if (!weighingStations || weighingStations.length === 0) return defaultPosition;
 
-        const sumLat = warehousesList.reduce((sum, warehouse) => sum + warehouse.lat, 0);
-        const sumLon = warehousesList.reduce((sum, warehouse) => sum + warehouse.lon, 0);
+        const sumLat = weighingStations.reduce((sum, station) => sum + station.lat, 0);
+        const sumLon = weighingStations.reduce((sum, station) => sum + station.lon, 0);
 
         return [
-            sumLat / warehousesList.length,
-            sumLon / warehousesList.length
+            sumLat / weighingStations.length,
+            sumLon / weighingStations.length
         ] as [number, number];
+    };
+
+    // Hàm xử lý khi nhấp vào xem lịch sử
+    const handleViewHistory = (warehouseId: number) => {
+        // Điều hướng đến trang kho với tab lịch sử được chọn
+        navigate(`/warehouses?id=${warehouseId}&tab=history`);
     };
 
     if (isLoading) {
@@ -61,9 +90,9 @@ function MapPage() {
     if (error) {
         return (
             <div className="bg-white p-6 rounded-lg shadow-md">
-                <h1 className="text-2xl font-semibold text-gray-900">Bản Đồ Kho Hàng</h1>
+                <h1 className="text-2xl font-semibold text-gray-900">Bản Đồ Điểm Cân</h1>
                 <div className="text-red-500">
-                    Đã xảy ra lỗi khi tải dữ liệu kho: {(error as Error).message}
+                    Đã xảy ra lỗi khi tải dữ liệu: {(error as Error).message}
                 </div>
             </div>
         );
@@ -73,9 +102,9 @@ function MapPage() {
         <div>
             <div className="sm:flex sm:items-center mb-6">
                 <div className="sm:flex-auto">
-                    <h1 className="text-2xl font-semibold text-gray-900">Bản Đồ Kho Hàng</h1>
+                    <h1 className="text-2xl font-semibold text-gray-900">Bản Đồ Điểm Cân</h1>
                     <p className="mt-2 text-sm text-gray-700">
-                        Hiển thị vị trí và thông tin của tất cả kho hàng trên bản đồ
+                        Hiển thị vị trí và thông tin của tất cả điểm cân trên bản đồ
                     </p>
                 </div>
             </div>
@@ -93,50 +122,43 @@ function MapPage() {
                             url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
                         />
 
-                        {warehousesList?.map((warehouse) => (
+                        {weighingStations.map((station) => (
                             <Marker
-                                key={warehouse.warehouseid}
-                                position={[warehouse.lat, warehouse.lon]}
-                                icon={defaultIcon}
+                                key={station.id}
+                                position={[station.lat, station.lon]}
+                                icon={activeIcon}
                             >
-                                <Popup className="warehouse-popup" minWidth={250}>
+                                <Popup className="weighing-station-popup" minWidth={250}>
                                     <div className="p-2">
                                         <div className="flex items-center mb-3">
                                             <div className="flex-shrink-0">
-                                                <MapPin className="h-5 w-5 text-indigo-600" />
+                                                <Activity className="h-5 w-5 text-green-600" />
                                             </div>
                                             <div className="ml-3">
                                                 <h3 className="text-lg font-medium text-gray-900">
-                                                    {warehouse.name}
+                                                    {station.name}
                                                 </h3>
-                                                <p className="text-sm text-gray-500">{warehouse.address}</p>
                                             </div>
                                         </div>
 
-                                        <div className="mt-3">
-                                            <div className="flex justify-between text-sm">
-                                                <span className="text-gray-500">Sức Chứa</span>
-                                                <span className="font-medium text-gray-900">
-                                                    {warehouse.currentcapacity}/{warehouse.totalcapacity}
+                                        <div className="mt-3 space-y-2">
+                                            <p><span className="font-semibold">Tình trạng:</span>{' '}
+                                                <span className="text-green-600 font-medium">
+                                                    Đang hoạt động (On)
                                                 </span>
-                                            </div>
-                                            <div className="mt-2 w-full bg-gray-200 rounded-full h-2.5">
-                                                <div
-                                                    className="bg-indigo-600 h-2.5 rounded-full"
-                                                    style={{
-                                                        width: `${(warehouse.currentcapacity / warehouse.totalcapacity) * 100}%`
-                                                    }}
-                                                ></div>
-                                            </div>
+                                            </p>
+                                            <p><span className="font-semibold">Đơn vị quản lý:</span>{' '}
+                                                {station.managementUnit}
+                                            </p>
                                         </div>
 
                                         <div className="mt-4">
-                                            <a
-                                                href={`/warehouses?id=${warehouse.warehouseid}`}
-                                                className="inline-flex items-center px-3 py-2 border border-transparent text-sm leading-4 font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
+                                            <button
+                                                onClick={() => handleViewHistory(station.warehouseId)}
+                                                className="w-full inline-flex justify-center items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
                                             >
-                                                Xem chi tiết
-                                            </a>
+                                                Xem lịch sử cân
+                                            </button>
                                         </div>
                                     </div>
                                 </Popup>
@@ -146,27 +168,34 @@ function MapPage() {
                 </div>
             </div>
 
-            {/* Thêm phần hiển thị danh sách kho ở dưới bản đồ (tùy chọn) */}
+            {/* Danh sách điểm cân ở dưới bản đồ */}
             <div className="mt-8 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-                {warehousesList?.map((warehouse) => (
+                {weighingStations.map((station) => (
                     <div
-                        key={warehouse.warehouseid}
+                        key={station.id}
                         className="bg-white overflow-hidden shadow rounded-lg cursor-pointer hover:shadow-md transition-shadow"
-                        onClick={() => {
-                            // Có thể thêm logic để focus vào marker tương ứng trên bản đồ
-                            window.location.href = `/warehouses?id=${warehouse.warehouseid}`;
-                        }}
+                        onClick={() => handleViewHistory(station.warehouseId)}
                     >
                         <div className="p-5">
                             <div className="flex items-center">
                                 <div className="flex-shrink-0">
-                                    <MapPin className="h-6 w-6 text-indigo-600" />
+                                    <div className="h-10 w-10 rounded-full flex items-center justify-center bg-green-100 text-green-700">
+                                        <Activity className="h-6 w-6" />
+                                    </div>
                                 </div>
                                 <div className="ml-4">
                                     <h3 className="text-lg font-medium text-gray-900">
-                                        {warehouse.name}
+                                        {station.name}
                                     </h3>
-                                    <p className="text-sm text-gray-500">{warehouse.address}</p>
+                                    <p className="text-sm text-gray-500">{station.managementUnit}</p>
+                                </div>
+                            </div>
+                            <div className="mt-4">
+                                <div className="flex justify-between text-sm">
+                                    <span className="text-gray-500">Tình trạng</span>
+                                    <span className="font-medium text-green-600">
+                                        Đang hoạt động
+                                    </span>
                                 </div>
                             </div>
                         </div>

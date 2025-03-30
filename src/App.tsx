@@ -48,7 +48,7 @@ function App() {
                         <Route path="packages" element={<Packages />} />
                         <Route path="warehouses" element={<Warehouses />} />
                         <Route path="generate-qrcode" element={<GenerateQRCode />} />
-                        <Route path="map" element={<MapPage />} /> {/* Thêm route mới cho trang Bản Đồ */}
+                        <Route path="map" element={<MapPage />} />
 
                         {/* Redirect any unmatched routes to dashboard */}
                         <Route path="*" element={<Navigate to="/" replace />} />
