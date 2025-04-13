@@ -2,13 +2,22 @@ import React from 'react';
 import { Outlet, Link, useNavigate } from 'react-router-dom';
 import { Package, Warehouse, LogOut, QrCode, Map } from 'lucide-react';
 import { useAuthStore } from '../store/authStore';
+import { useNotification } from '../contexts/NotificationContext';
 
 function Layout() {
   const navigate = useNavigate();
   const logout = useAuthStore((state) => state.logout);
+  const { disconnect } = useNotification();
 
   const handleLogout = () => {
-    logout();
+    // Ngắt kết nối SSE trước khi xóa token
+    disconnect();
+    
+    // Xóa token và thông tin user
+    localStorage.removeItem('token');
+    localStorage.removeItem('user');
+    
+    // Chuyển hướng về trang đăng nhập
     navigate('/login');
   };
 

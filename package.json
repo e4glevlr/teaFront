@@ -12,6 +12,7 @@
   "dependencies": {
     "@tanstack/react-query": "^5.25.0",
     "axios": "^1.6.7",
+    "event-source-polyfill": "^1.0.31",
     "leaflet": "^1.9.4",
     "lucide-react": "^0.487.0",
     "qrcode.react": "^4.2.0",
@@ -31,6 +32,6 @@
     "postcss": "^8.4.35",
     "tailwindcss": "^3.4.1",
     "typescript": "^5.5.3",
-    "vite": "^6.2.5"
+    "vite": "^5.4.18"
   }
 }

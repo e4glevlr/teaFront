@@ -109,17 +109,13 @@ function Warehouses() {
         }
 
         // Chuyển đổi sang số trước khi so sánh
-        const teacode = Number(teacodeInput);
+        const teacode = teacodeInput
 
-        // Kiểm tra xem có phải là số hợp lệ không sau khi chuyển đổi
-        if (isNaN(teacode)) {
-            return 'Mã không hợp lệ'; // Hoặc 'Không rõ'
-        }
 
         switch (teacode) { // Bây giờ teacode chắc chắn là number
-            case 1:
+            case "absf882":
                 return 'Chè Thái';
-            case 2:
+            case "absf883":
                 return 'Chè Trung Quốc';
             default:
                 return `Loại khác (${teacode})`; // Giữ nguyên nếu muốn hiển thị mã không xác định

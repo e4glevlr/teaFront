@@ -4,17 +4,25 @@ import { useNavigate, Link } from 'react-router-dom';
 import { auth } from '../lib/api';
 import { useAuthStore } from '../store/authStore';
 import { LoginCredentials } from '../types/api';
+import { useNotification } from '../contexts/NotificationContext'; // Import hook useNotification
 
 function Login() {
   const navigate = useNavigate();
   const setAuth = useAuthStore((state) => state.setAuth);
   const { register, handleSubmit, formState: { errors } } = useForm<LoginCredentials>();
+  const { connect } = useNotification(); // Lấy hàm connect từ context
 
   const onSubmit = async (data: LoginCredentials) => {
     try {
       const response = await auth.login(data.email, data.password);
       if (response.code === 200) {
+        // Lưu thông tin xác thực (giữ nguyên logic hiện tại)
         setAuth(null, response.data); // token is in response.data
+        
+        // Kết nối SSE sau khi đăng nhập thành công
+        // Giả sử token được lưu trong response.data
+        connect(response.data);
+        
         navigate('/');
       }
     } catch (error) {

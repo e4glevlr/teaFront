@@ -3,7 +3,7 @@ import { useQuery } from '@tanstack/react-query';
 import { MapPin, Package as PackageIcon, History, Info, ArrowLeft } from 'lucide-react';
 import { warehouses } from '../lib/api';
 import { useSearchParams, useNavigate } from 'react-router-dom';
-
+import { EventSourcePolyfill } from 'event-source-polyfill'
 // --- Imports cho Leaflet ---
 import { MapContainer, TileLayer, Marker, Popup } from 'react-leaflet';
 import 'leaflet/dist/leaflet.css';
