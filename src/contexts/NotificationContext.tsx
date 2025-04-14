@@ -63,7 +63,8 @@ export function NotificationProvider({ children }: { children: React.ReactNode }
 
     try {
       // Tạo kết nối SSE mới
-      const newEventSource = new EventSourcePolyfill("http://localhost:8080/notice", {
+      const API_BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:8080';
+      const newEventSource = new EventSourcePolyfill(API_BASE_URL+"/notice", {
         headers: {
           'Authorization': `Bearer ${token}`
         }
