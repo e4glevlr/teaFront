@@ -102,26 +102,20 @@ function Warehouses() {
     };
 
     // *** HÀM MỚI: Lấy tên loại chè từ teacode ***
-    const getTeaTypeName = (teacodeInput: number | string | null | undefined): string => {
-        // Chấp nhận cả string hoặc number từ input
-        if (teacodeInput === null || teacodeInput === undefined || teacodeInput === '') {
-            return 'Không rõ';
-        }
+    const getTeaTypeName = (teacodeInput?: number | string | null): string => {
+    if (!teacodeInput && teacodeInput !== 0) {
+        return 'Không rõ';
+    }
 
-        // Chuyển đổi sang số trước khi so sánh
-        const teacode = teacodeInput
+    const teacode = String(teacodeInput).trim().toLowerCase();
 
-
-        switch (teacode) { // Bây giờ teacode chắc chắn là number
-            case "absf882":
-                return 'Chè Thái';
-            case "absf883":
-                return 'Chè Trung Quốc';
-            default:
-                return `Loại khác (${teacode})`; // Giữ nguyên nếu muốn hiển thị mã không xác định
-            // return 'Loại khác'; // Hoặc chỉ hiển thị 'Loại khác'
-        }
+    const teaTypeMap: Record<string, string> = {
+        absf009: 'Chè Thái',
+        absf008: 'Chè Trung Quốc',
     };
+
+    return teaTypeMap[teacode] || `Loại khác (${teacode})`;
+};
     // ******************************************
 
     // *** CẬP NHẬT HÀM: Lấy màu từ teacode ***
