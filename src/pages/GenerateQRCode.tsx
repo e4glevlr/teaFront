@@ -29,7 +29,7 @@ const TEA_TYPES: TeaType[] = [
 ];
 
 // API URL gốc
-const API_BASE_URL = 'http://localhost:8080';
+const API_BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:8080';
 
 function GenerateQRCode() {
     const [qrCodeData, setQrCodeData] = useState<string | null>(null);
