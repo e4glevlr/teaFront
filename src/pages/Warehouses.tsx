@@ -167,8 +167,7 @@ function Warehouses() {
 
     // Hàm lấy class cho tab (giữ nguyên)
     const getTabClassName = (tabName: string) => {
-        // ... code giữ nguyên
-        return `w-1/3 py-4 px-1 text-center border-b-2 font-medium text-sm ${
+        return `w-1/2 py-4 px-1 text-center border-b-2 font-medium text-sm ${
             activeTab === tabName
                 ? 'border-indigo-500 text-indigo-600'
                 : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
@@ -225,9 +224,6 @@ function Warehouses() {
                                 </button>
                                 <button onClick={() => handleTabChange('packages')} className={getTabClassName('packages')}>
                                     <PackageIcon className="w-5 h-5 inline-block mr-2" /> Gói hàng
-                                </button>
-                                <button onClick={() => handleTabChange('history')} className={getTabClassName('history')}>
-                                    <History className="w-5 h-5 inline-block mr-2" /> Lịch sử cân
                                 </button>
                             </nav>
                         </div>
@@ -337,82 +333,6 @@ function Warehouses() {
                                         </div>
                                     ) : (
                                         <p className="text-gray-500">Không có gói hàng nào trong kho này.</p>
-                                    )}
-                                </div>
-                            )}
-
-                            {/* --- Tab Lịch sử cân --- */}
-                            {activeTab === 'history' && (
-                                <div>
-                                    <div className="flex justify-between items-center mb-4">
-                                        <h3 className="text-lg font-medium text-gray-900">Lịch sử cân</h3>
-                                        <span className="text-sm text-gray-500">Điểm cân: <span className="font-medium">{selectedWarehouse.name}</span></span>
-                                    </div>
-                                    {isLoadingPackages ? (
-                                        <div className="flex items-center justify-center h-32"><div className="animate-spin rounded-full h-6 w-6 border-b-2 border-indigo-600"></div></div>
-                                    ) : warehousePackages?.packages && warehousePackages.packages.length > 0 ? (
-                                        <div className="overflow-x-auto">
-                                            <table className="min-w-full divide-y divide-gray-200">
-                                                <thead className="bg-gray-50">
-                                                <tr>
-                                                    {/* ... Các th khác ... */}
-                                                    <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Thời gian cân</th>
-                                                    <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Khối lượng ({warehousePackages.packages.find(p => p.weightime)?.unit || 'kg'})</th>
-                                                    <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Nhiệt độ</th>
-                                                    <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Độ ẩm</th>
-                                                    <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Loại hàng</th>
-                                                    <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Chủ hàng</th>
-                                                </tr>
-                                                </thead>
-                                                <tbody className="bg-white divide-y divide-gray-200">
-                                                {warehousePackages.packages
-                                                    .filter((pkg): pkg is Package & { weightime: string } => !!pkg.weightime) // Chỉ lấy gói đã cân
-                                                    .sort((a, b) => new Date(b.weightime).getTime() - new Date(a.weightime).getTime()) // Sắp xếp
-                                                    .map((pkg) => (
-                                                        <tr key={`weigh-${pkg.packageId}`}>
-                                                            <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{new Date(pkg.weightime).toLocaleString('vi-VN')}</td>
-                                                            <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">{pkg.capacity}</td>
-                                                            {/* Hiển thị nhiệt độ */}
-                                                            <td className="px-6 py-4 whitespace-nowrap text-sm">
-                                                                {pkg.temperature !== undefined ? (
-                                                                    <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-red-100 text-red-800">
-                                                                        <svg className="h-3 w-3 mr-1 text-red-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                                                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 10V3L4 14h7v7l9-11h-7z" />
-                                                                        </svg>
-                                                                        {pkg.temperature}°C
-                                                                    </span>
-                                                                ) : 'N/A'}
-                                                            </td>
-                                                            {/* Hiển thị độ ẩm */}
-                                                            <td className="px-6 py-4 whitespace-nowrap text-sm">
-                                                                {pkg.humidity !== undefined ? (
-                                                                    <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-blue-100 text-blue-800">
-                                                                        <svg className="h-3 w-3 mr-1 text-blue-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                                                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 15a4 4 0 004 4h9a5 5 0 10-.1-9.999 5.002 5.002 0 10-9.78 2.096A4.001 4.001 0 003 15z" />
-                                                                        </svg>
-                                                                        {pkg.humidity}%
-                                                                    </span>
-                                                                ) : 'N/A'}
-                                                            </td>
-                                                            {/* *** SỬ DỤNG HÀM MỚI VÀ teacode *** */}
-                                                            <td className="px-6 py-4 whitespace-nowrap text-sm">
-                                                                    <span className={`inline-flex rounded-full px-2 py-1 text-xs font-semibold ${getTeaTypeColor(pkg.teacode)}`}>
-                                                                        {getTeaTypeName(pkg.teacode)}
-                                                                    </span>
-                                                            </td>
-                                                            {/* ******************************** */}
-                                                            <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{pkg.fullname ?? 'N/A'}</td>
-                                                        </tr>
-                                                    ))}
-                                                {/* Thông báo nếu không có lịch sử cân */}
-                                                {warehousePackages.packages.filter(pkg => pkg.weightime).length === 0 && (
-                                                    <tr><td colSpan={6} className="px-6 py-4 text-sm text-gray-500 text-center">Không có dữ liệu lịch sử cân cho kho này.</td></tr>
-                                                )}
-                                                </tbody>
-                                            </table>
-                                        </div>
-                                    ) : (
-                                        <p className="text-gray-500">Không có dữ liệu gói hàng cho kho này.</p>
                                     )}
                                 </div>
                             )}
