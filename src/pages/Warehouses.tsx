@@ -45,6 +45,8 @@ interface Package {
     status: string;
     createdtime: string;
     weightime?: string | null | undefined;
+    temperature?: number;
+    humidity?: number;
 }
 // *******************************
 
@@ -238,8 +240,7 @@ function Warehouses() {
                                     {/* Thông tin chi tiết */}
                                     <div>
                                         <h3 className="text-lg font-medium text-gray-900 mb-4">Thông tin chi tiết</h3>
-                                        <dl className="grid grid-cols-1 gap-x-4 gap-y-4 sm:grid-cols-2"> {/* Giảm gap y */}
-                                            {/* ... Các trường ID, Tên, Sức chứa, etc. ... */}
+                                        <dl className="grid grid-cols-1 gap-x-4 gap-y-4 sm:grid-cols-2">
                                             <div><dt className="text-sm font-medium text-gray-500">ID</dt><dd className="mt-1 text-sm text-gray-900">{selectedWarehouse.warehouseid}</dd></div>
                                             <div><dt className="text-sm font-medium text-gray-500">Tên kho</dt><dd className="mt-1 text-sm text-gray-900">{selectedWarehouse.name}</dd></div>
                                             <div className="sm:col-span-2"><dt className="text-sm font-medium text-gray-500">Địa chỉ</dt><dd className="mt-1 text-sm text-gray-900">{selectedWarehouse.address || 'Chưa cập nhật'}</dd></div>
@@ -283,6 +284,8 @@ function Warehouses() {
                                                     <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Tên</th>
                                                     <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Loại</th>
                                                     <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Số lượng</th>
+                                                    <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Nhiệt độ</th>
+                                                    <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Độ ẩm</th>
                                                     <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Trạng thái</th>
                                                     <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Thời gian tạo</th>
                                                 </tr>
@@ -299,6 +302,28 @@ function Warehouses() {
                                                         </td>
                                                         {/* ******************************** */}
                                                         <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{pkg.capacity ?? 'N/A'} {pkg.unit ?? ''}</td>
+                                                        {/* Thêm cột Nhiệt độ */}
+                                                        <td className="px-6 py-4 whitespace-nowrap text-sm">
+                                                            {pkg.temperature !== undefined ? (
+                                                                <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-red-100 text-red-800">
+                                                                    <svg className="h-3 w-3 mr-1 text-red-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 10V3L4 14h7v7l9-11h-7z" />
+                                                                    </svg>
+                                                                    {pkg.temperature}°C
+                                                                </span>
+                                                            ) : 'N/A'}
+                                                        </td>
+                                                        {/* Thêm cột Độ ẩm */}
+                                                        <td className="px-6 py-4 whitespace-nowrap text-sm">
+                                                            {pkg.humidity !== undefined ? (
+                                                                <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-blue-100 text-blue-800">
+                                                                    <svg className="h-3 w-3 mr-1 text-blue-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 15a4 4 0 004 4h9a5 5 0 10-.1-9.999 5.002 5.002 0 10-9.78 2.096A4.001 4.001 0 003 15z" />
+                                                                    </svg>
+                                                                    {pkg.humidity}%
+                                                                </span>
+                                                            ) : 'N/A'}
+                                                        </td>
                                                         <td className="px-6 py-4 whitespace-nowrap text-sm">
                                                                 <span className={`inline-flex rounded-full px-2 py-1 text-xs font-semibold ${getStatusColor(pkg.status)}`}>
                                                                     {getStatusTranslation(pkg.status)}
@@ -333,6 +358,8 @@ function Warehouses() {
                                                     {/* ... Các th khác ... */}
                                                     <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Thời gian cân</th>
                                                     <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Khối lượng ({warehousePackages.packages.find(p => p.weightime)?.unit || 'kg'})</th>
+                                                    <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Nhiệt độ</th>
+                                                    <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Độ ẩm</th>
                                                     <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Loại hàng</th>
                                                     <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Chủ hàng</th>
                                                 </tr>
@@ -345,6 +372,28 @@ function Warehouses() {
                                                         <tr key={`weigh-${pkg.packageId}`}>
                                                             <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{new Date(pkg.weightime).toLocaleString('vi-VN')}</td>
                                                             <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">{pkg.capacity}</td>
+                                                            {/* Hiển thị nhiệt độ */}
+                                                            <td className="px-6 py-4 whitespace-nowrap text-sm">
+                                                                {pkg.temperature !== undefined ? (
+                                                                    <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-red-100 text-red-800">
+                                                                        <svg className="h-3 w-3 mr-1 text-red-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                                                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 10V3L4 14h7v7l9-11h-7z" />
+                                                                        </svg>
+                                                                        {pkg.temperature}°C
+                                                                    </span>
+                                                                ) : 'N/A'}
+                                                            </td>
+                                                            {/* Hiển thị độ ẩm */}
+                                                            <td className="px-6 py-4 whitespace-nowrap text-sm">
+                                                                {pkg.humidity !== undefined ? (
+                                                                    <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-blue-100 text-blue-800">
+                                                                        <svg className="h-3 w-3 mr-1 text-blue-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                                                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 15a4 4 0 004 4h9a5 5 0 10-.1-9.999 5.002 5.002 0 10-9.78 2.096A4.001 4.001 0 003 15z" />
+                                                                        </svg>
+                                                                        {pkg.humidity}%
+                                                                    </span>
+                                                                ) : 'N/A'}
+                                                            </td>
                                                             {/* *** SỬ DỤNG HÀM MỚI VÀ teacode *** */}
                                                             <td className="px-6 py-4 whitespace-nowrap text-sm">
                                                                     <span className={`inline-flex rounded-full px-2 py-1 text-xs font-semibold ${getTeaTypeColor(pkg.teacode)}`}>
@@ -357,7 +406,7 @@ function Warehouses() {
                                                     ))}
                                                 {/* Thông báo nếu không có lịch sử cân */}
                                                 {warehousePackages.packages.filter(pkg => pkg.weightime).length === 0 && (
-                                                    <tr><td colSpan={4} className="px-6 py-4 text-sm text-gray-500 text-center">Không có dữ liệu lịch sử cân cho kho này.</td></tr>
+                                                    <tr><td colSpan={6} className="px-6 py-4 text-sm text-gray-500 text-center">Không có dữ liệu lịch sử cân cho kho này.</td></tr>
                                                 )}
                                                 </tbody>
                                             </table>

@@ -15,6 +15,8 @@ export interface Package {
   unit: string;
   status: string;
   teacode: string;
+  humidity?: number;
+  temperature?: number;
 }
 
 export interface Warehouse {
